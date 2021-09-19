@@ -12,35 +12,62 @@ key_list = ["auto", "break", "case", "char", "const", "continue", "default", "do
 def read_file(file_path):
     # 读入文件在同一目录下可以直接写文件名
     with open(file_path, 'r', encoding='UTF-8') as f:
-        temp_text = f.read()
-    return temp_text
+        text = f.read()
+    return text
 
 
 # 去除文本干扰成分（注释、字符串）
-def clean_data(temp_text):
+def clean_data(text):
     # 匹配所有注释
     pattern_notes = r'(//.*)|(/\*[\s\S]*?\*/)|(/\*[\s\S]*)'
     # 匹配单引号字符串
     pattern_str1 = r'(\'[\s\S]*?\')|(\'[\s\S]*)'
     # 匹配双引号字符串
     pattern_str2 = r'(\"[\s\S]*?\")|(\"[\s\S]*)'
-    temp_text = re.sub(pattern_notes, ' ', temp_text, flags=re.MULTILINE)
-    temp_text = re.sub(pattern_str1, ' ', temp_text, flags=re.MULTILINE)
-    temp_text = re.sub(pattern_str2, ' ', temp_text, flags=re.MULTILINE)
-    return temp_text
+    text = re.sub(pattern_notes, ' ', text, flags=re.MULTILINE)
+    text = re.sub(pattern_str1, ' ', text, flags=re.MULTILINE)
+    text = re.sub(pattern_str2, ' ', text, flags=re.MULTILINE)
+    return text
 
 
-def key_count(temp_text):
+def key_count(text):
     pattern_num = r'[a-zA-Z]{2,}'
-    temp_data = re.findall(pattern_num, temp_text)
-    temp_num = 0
+    key_data = re.findall(pattern_num, text)
+    num = 0
     for key in key_list:
-        temp_num += temp_data.count(key)
-    return temp_data, temp_num
+        num += key_data.count(key)
+    return key_data, num
+
+
+def switch_case_count(key_data):
+    case_num = []
+    switch_num = 0
+    temp_case = 0
+    for value in key_data:
+        if value == "switch":
+            switch_num += 1
+            if temp_case > 0:
+                case_num.append(temp_case)
+                temp_case = 0
+        if value == "case":
+            temp_case += 1
+    case_num.append(temp_case)
+
+    return switch_num, case_num
 
 
 if __name__ == "__main__":
-    text = read_file('text.cpp')
-    text = clean_data(text)
-    key_data, num = key_count(text)
-    print("total num:", num)
+    temp_text = read_file('text.cpp')
+    temp_text = clean_data(temp_text)
+    temp_key, temp_num = key_count(temp_text)
+    print("total num:", temp_num)
+    print(temp_key)
+    temp_switch_num, temp_case_num = switch_case_count(temp_key)
+    print("switch num:", temp_switch_num)
+    print("case num: ", end='')
+    for index, temp_value in enumerate(temp_case_num):
+        if index + 1 == len(temp_case_num):
+            print(temp_value, end='')
+        else:
+            print(temp_value, end=' ')
+
