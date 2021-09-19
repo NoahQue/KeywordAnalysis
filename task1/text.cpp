@@ -15,6 +15,8 @@ int main(){
             break;
     }/* ddddddddddddddd */
     switch(i){
+    }
+    switch(i){
         case 0:
             break;
 
@@ -29,6 +31,8 @@ int main(){
         if(i<-1){}
         else{}
     }
+    switch(i){
+    }
     else if(i>0){
         if (i>2){}
         else if (i==2) {}
@@ -38,6 +42,8 @@ int main(){
     else{
         if(j!=0){}
         else{}
+    }
+    switch(i){
     }
     return 0;
 }
