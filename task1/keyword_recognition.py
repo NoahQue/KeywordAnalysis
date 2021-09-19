@@ -30,6 +30,7 @@ def clean_data(text):
     return text
 
 
+# 得出关键字数
 def key_count(text):
     pattern_num = r'[a-zA-Z]{2,}'
     key_data = re.findall(pattern_num, text)
@@ -39,20 +40,27 @@ def key_count(text):
     return key_data, num
 
 
+# 得出switch_case结构数
 def switch_case_count(key_data):
     case_num = []
     switch_num = 0
     temp_case = 0
     for value in key_data:
         if value == "switch":
-            switch_num += 1
-            if temp_case > 0:
+            if switch_num > 0:
                 case_num.append(temp_case)
                 temp_case = 0
+            switch_num += 1
+
         if value == "case":
             temp_case += 1
     case_num.append(temp_case)
 
+    # 处理不带有case的switch
+    num = case_num.count(0)
+    for i in range(num):
+        case_num.remove(0)
+    switch_num -= num
     return switch_num, case_num
 
 
@@ -70,4 +78,3 @@ if __name__ == "__main__":
             print(temp_value, end='')
         else:
             print(temp_value, end=' ')
-
