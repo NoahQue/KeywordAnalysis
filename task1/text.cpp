@@ -1,54 +1,59 @@
 #include <stdio.h>
+void test(){
+    printf("asdfasdf  xxd dsff");
+    printf('d');
+}
 int main(){
     int i=1;
     double j=0;
-    long f;
+    long f;//sssasddd dcad
+    //asdad
     switch(i){
         case 0:
             break;
         case 1:
-// sadaddasdaad
             break;
         case 2:
             break;
         default:
             break;
-    }/* ddddddddddddddd */
-    switch(i){
-    }
+    }/*ddsfsfsfd*/
     switch(i){
         case 0:
             break;
-
         case 1:
             break;
         default:
             break;
-    }'Hello world!!!'
-    "sssssss
-    sss"
+    }
     if(i<0){
         if(i<-1){}
-        else{}
-    }
-    switch(i){
+        else{
+            if(i==2);
+        }
     }
     else if(i>0){
-        if (i>2){}
-        else if (i==2) {}
+        if (i>2){
+            if(i!=1);
+            else if(i>1);
+        }
+        else if (i==2) {
+            if(i<-1){}
+            else if(i==1){}
+            else{}
+        }
         else if (i>1) {}
-        else {}
-   }"      sssssssssss   s    "
+        else {
+        }
+    }
     else{
         if(j!=0){}
         else{}
     }
-    switch(i){
-    }
+    switch(i){}
     return 0;
 }
-
-/*s
-  sssssssssss
-sss   sssss
-  ccc11111
+/*ds
+asdasdasd
+asdsadasd
+as?
