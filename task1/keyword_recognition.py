@@ -24,10 +24,18 @@ def clean_data(text):
     pattern_str1 = r'(\'[\s\S]*?\')|(\'[\s\S]*)'
     # 匹配双引号字符串
     pattern_str2 = r'(\"[\s\S]*?\")|(\"[\s\S]*)'
-    text = re.sub(pattern_notes, ' ', text, flags=re.MULTILINE)
-    text = re.sub(pattern_str1, ' ', text, flags=re.MULTILINE)
-    text = re.sub(pattern_str2, ' ', text, flags=re.MULTILINE)
+    text = re.sub(pattern_notes, lambda x: generate_str(x.group()), text, flags=re.MULTILINE)
+    text = re.sub(pattern_str1, lambda x: generate_str(x.group()), text, flags=re.MULTILINE)
+    text = re.sub(pattern_str2, lambda x: generate_str(x.group()), text, flags=re.MULTILINE)
     return text
+
+
+# 用与替换时生成等长空字符串
+def generate_str(str):
+    temp = ""
+    for i in range(len(str)):
+        temp += " "
+    return temp
 
 
 # 得出关键字数
@@ -64,17 +72,68 @@ def switch_case_count(key_data):
     return switch_num, case_num
 
 
-if __name__ == "__main__":
-    temp_text = read_file('text.cpp')
-    temp_text = clean_data(temp_text)
+def if_type_count(text):
+    pattern_out = r'[\w](else if|if|else)[\w]'
+    pattern_key = r'(else if|if|else)'
+    # 排除变量名干扰
+    text = re.sub(pattern_out, ' ', text, flags=re.MULTILINE)
+    key_data = re.findall(pattern_key, text)
+
+    # 统计if/else if/else前向空格
+    pattern_front_space = r'\n( *)(?=if|else if|else)'
+    space_data = re.findall(pattern_front_space, text)
+    space_data = [len(i) for i in space_data]
+    # 1代表if/ 2代表else if/ 3代表else/
+    stack = []
+    if_else_num = 0
+    if_elseif_else_num = 0
+    for index, values in enumerate(key_data):
+        while len(stack) > 0:
+            if space_data[index] < space_data[stack[len(stack) - 1]]:
+                stack.pop()
+            else:
+                break
+        if values == 'if':
+            stack.append(index)
+        elif values == 'else if':
+            if len(stack) == 0:
+                continue
+            if key_data[stack[len(stack) - 1]] == 'if':
+                stack.append(index)
+        else:
+            if len(stack) == 0:
+                continue
+            if key_data[stack[len(stack) - 1]] == 'if':
+                if_else_num += 1
+                stack.pop()
+            else:
+                while len(stack) > 0:
+                    if key_data[stack[len(stack) - 1]] == 'else if':
+                        stack.pop()
+                    else:
+                        break
+                stack.pop()
+                if_elseif_else_num += 1
+    return if_else_num, if_elseif_else_num
+
+
+def start(filepath):
+    temp_raw_text = read_file(filepath)
+    temp_text = clean_data(temp_raw_text)
     temp_key, temp_num = key_count(temp_text)
     print("total num:", temp_num)
-    print(temp_key)
     temp_switch_num, temp_case_num = switch_case_count(temp_key)
     print("switch num:", temp_switch_num)
     print("case num: ", end='')
     for index, temp_value in enumerate(temp_case_num):
         if index + 1 == len(temp_case_num):
-            print(temp_value, end='')
+            print(temp_value)
         else:
             print(temp_value, end=' ')
+    temp_if_else_num, temp_if_elseif_else_num = if_type_count(temp_text)
+    print("if-else num:", temp_if_else_num)
+    print("if-elseif-else num:", temp_if_elseif_else_num)
+
+
+if __name__ == "__main__":
+    start('text.cpp')
