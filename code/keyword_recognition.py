@@ -1,4 +1,5 @@
 import re
+import sys
 
 # 关键字列表
 key_list = ["auto", "break", "case", "char", "const", "continue", "default", "do",
@@ -174,18 +175,22 @@ def level4(filepath):
     print("if-elseif-else num:", temp_if_elseif_else_num)
 
 
-def start(filepath, level):
-    if level == 1:
+# 选择模式
+def start(filepath, level_type):
+    if level_type == '1':
         level1(filepath)
-    elif level == 2:
+    elif level_type == '2':
         level2(filepath)
-    elif level == 3:
+    elif level_type == '3':
         level3(filepath)
     else:
         level4(filepath)
 
 
 if __name__ == "__main__":
-    for t in range(1, 5):
-        start(filepath='../data/text.cpp', level=t)
-        print()
+    try:
+        path, level = sys.argv[1:3]
+        print(path, level)
+        start(filepath='../data/key.c', level_type=level)
+    except Exception as e:
+        print(e)
