@@ -72,7 +72,29 @@ def switch_case_count(key_data):
     return switch_num, case_num
 
 
-def if_type_count(text):
+# 单纯只有if_else
+def if_else_count(text):
+    pattern_out = r'[\w](if|else)[\w]'
+    pattern_key = r'(if|else)'
+    # 排除变量名干扰
+    text = re.sub(pattern_out, ' ', text, flags=re.MULTILINE)
+    key_data = re.findall(pattern_key, text)
+    # print(key_data)
+    stack = []
+    if_else_num = 0
+    for index, values in enumerate(key_data):
+        if values == 'if':
+            stack.append(index)
+        else:
+            if len(stack) == 0:
+                continue
+            stack.pop()
+            if_else_num += 1
+    return if_else_num
+
+
+# if-else 与 if—elseif-else混合
+def if_elseif_else_count(text):
     pattern_out = r'[\w](else if|if|else)[\w]'
     pattern_key = r'(else if|if|else)'
     # 排除变量名干扰
@@ -117,11 +139,16 @@ def if_type_count(text):
     return if_else_num, if_elseif_else_num
 
 
-def start(filepath):
+def level1(filepath):
     temp_raw_text = read_file(filepath)
     temp_text = clean_data(temp_raw_text)
     temp_key, temp_num = key_count(temp_text)
     print("total num:", temp_num)
+    return temp_text, temp_key, temp_num
+
+
+def level2(filepath):
+    temp_text, temp_key, temp_num = level1(filepath)
     temp_switch_num, temp_case_num = switch_case_count(temp_key)
     print("switch num:", temp_switch_num)
     print("case num: ", end='')
@@ -130,10 +157,38 @@ def start(filepath):
             print(temp_value)
         else:
             print(temp_value, end=' ')
-    temp_if_else_num, temp_if_elseif_else_num = if_type_count(temp_text)
+    return temp_text, temp_key, temp_num
+
+
+def level3(filepath):
+    temp_text, temp_key, temp_num = level2(filepath)
+    temp_if_else_num = if_else_count(temp_text)
+    print("if-else num:", temp_if_else_num)
+    return temp_text, temp_key, temp_num
+
+
+def level4(filepath):
+    temp_text, temp_key, temp_num = level2(filepath)
+    temp_if_else_num, temp_if_elseif_else_num = if_elseif_else_count(temp_text)
     print("if-else num:", temp_if_else_num)
     print("if-elseif-else num:", temp_if_elseif_else_num)
 
 
+def start(filepath, level):
+    if level == 1:
+        level1(filepath)
+    elif level == 2:
+        level2(filepath)
+    elif level == 3:
+        level3(filepath)
+    else:
+        level4(filepath)
+
+
 if __name__ == "__main__":
-    start('text.cpp')
+    for t in range(1, 5):
+        start(filepath='text.cpp', level=t)
+        print()
+
+
+
