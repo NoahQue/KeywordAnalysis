@@ -187,5 +187,5 @@ def start(filepath, level):
 
 if __name__ == "__main__":
     for t in range(1, 5):
-        start(filepath='text.cpp', level=t)
+        start(filepath='../data/text.cpp', level=t)
         print()
