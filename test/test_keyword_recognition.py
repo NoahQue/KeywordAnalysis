@@ -1,7 +1,7 @@
 import unittest
 import sys
 sys.path.insert(0, "../code")
-from keyword_recognition import *
+from keyCount import *
 
 
 # 这里只测试几个关键函数
